@@ -17,11 +17,11 @@ dir = File.dirname(__FILE__)
 		yaml_file = "#{dir}/config/database.yml"
 	end
 
-		#Move back a directory
-	dir = "#{dir}/.."
-
 		#If we found my yaml file then quit out
 	break if !yaml_file.nil?
+
+		#Move back a directory
+	dir = "#{dir}/.."
 end
 
 	#Quit the program if we didn't find a config file
@@ -31,4 +31,9 @@ exit if yaml_file.nil?
 yaml = YAML::load(File.open(yaml_file))
 
 	#load up the requested database now
-exec("mysql -u #{yaml[$*[0]]["username"]} --password=#{yaml[$*[0]]["password"]} #{yaml[$*[0]]["database"]}")
+case yaml[$*[0]]["adapter"]
+when "sqlite3"
+	exec("sqlite3 #{dir}/#{yaml[$*[0]]["database"]}")
+when "mysql"
+	exec("mysql -u #{yaml[$*[0]]["username"]} --password=#{yaml[$*[0]]["password"]} #{yaml[$*[0]]["database"]}")
+end
