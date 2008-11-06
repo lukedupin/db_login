@@ -1,0 +1,34 @@
+#!/usr/bin/ruby
+
+require 'yaml'
+
+yaml_file = nil
+
+	#if the user didn't give me a env default to development
+$*[0] = 'development' if $*.size <= 0
+
+	#Look for a config directory
+dir = File.dirname(__FILE__)
+10.times do 
+	puts "#{dir} if #{File.directory?( "#{dir}/config" )}	and #{File.exist?("#{dir}/config/database.yml")}"
+
+			#Track any files we find now
+	if File.directory?( "#{dir}/config" )	and File.exist?("#{dir}/config/database.yml")
+		yaml_file = "#{dir}/config/database.yml"
+	end
+
+		#Move back a directory
+	dir = "#{dir}/.."
+
+		#If we found my yaml file then quit out
+	break if !yaml_file.nil?
+end
+
+	#Quit the program if we didn't find a config file
+exit if yaml_file.nil?
+
+	#Load my yaml file
+yaml = YAML::load(File.open(yaml_file))
+
+	#load up the requested database now
+exec("mysql -u #{yaml[$*[0]]["username"]} --password=#{yaml[$*[0]]["password"]} #{yaml[$*[0]]["database"]}")
