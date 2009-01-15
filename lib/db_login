@@ -1,7 +1,6 @@
 #!/usr/bin/ruby
 
-require 'db_login_code'
-require 'yaml'
+require "#{File.dirname(__FILE__)}/../vendor/plugins/db_login/lib/db_login_code"
 
   #CLI options
 if $*.size >= 1
