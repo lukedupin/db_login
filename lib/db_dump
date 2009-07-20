@@ -1,0 +1,10 @@
+#!/usr/bin/ruby
+
+require "#{File.dirname(__FILE__)}/../vendor/plugins/db_login/lib/db_login_code"
+
+  #CLI options
+if $*.size >= 1
+  do_login( $*[0], :dump )
+else
+  do_login( nil, :dump )
+end
