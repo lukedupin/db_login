@@ -1,6 +1,6 @@
 require 'yaml'
 
-def do_login( env = nil )
+def do_login( env = nil, action = :login )
     #Nil out my yaml file
   yaml_file = nil
 
@@ -32,10 +32,23 @@ def do_login( env = nil )
   yaml = YAML::load(File.open(yaml_file))
 
   	#load up the requested database now
-  case yaml[env]["adapter"]
-  when "sqlite3"
-  	exec("sqlite3 #{dir}/#{yaml[env]["database"]}")
-  when "mysql"
-  	exec("mysql -u #{yaml[env]["username"]} --password=#{yaml[env]["password"]} #{yaml[env]["database"]}")
+  if action == :login
+    case yaml[env]["adapter"]
+    when "sqlite3"
+  	  exec("sqlite3 #{dir}/#{yaml[env]["database"]}")
+    when "mysql"
+    	exec("mysql -u #{yaml[env]["username"]} --password=#{yaml[env]["password"]} #{yaml[env]["database"]}")
+    else
+      raise "#{yaml[env]["adapter"]} is not implemented yet"
+    end
+
+    #Dump the database!
+  elsif action == :dump
+    case yaml[env]["adapter"]
+    when "mysql"
+    	exec("mysqldump -u #{yaml[env]["username"]} --password=#{yaml[env]["password"]} #{yaml[env]["database"]}")
+    else
+      raise "#{yaml[env]["adapter"]} is not implemented yet"
+    end
   end
 end
